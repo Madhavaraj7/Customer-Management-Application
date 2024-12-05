@@ -8,7 +8,23 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+// Get the frontend URL (for dev and production)
+const allowedOrigins = [
+  'http://localhost:5173',  // For local development
+  process.env.FRONTEND_URL,  // For production (Vercel)
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  })
+);
 
 app.use(express.json());
 
